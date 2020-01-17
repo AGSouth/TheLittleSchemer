@@ -88,3 +88,18 @@
           (else (cons (car l) (multiinsertL new old (cdr l)))))))
 
 ; Chapter 4 The Little Schemer
+; note b must be positive whole numbers
+(define +
+  (lambda (a b)
+    (cond ((zero? b) a)
+           (else (+ (add1 a) (sub1 b))))))
+
+(define - 
+  (lambda (a b)
+    (cond ((zero? b) a)
+           (else (- (sub1 a) (sub1 b))))))
+
+(define addtup
+  (lambda (tup)
+    (cond ((null? tup) 0)
+           (else (+ (car tup) (addtup (cdr tup)))))))
