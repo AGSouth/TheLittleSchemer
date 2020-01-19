@@ -103,3 +103,36 @@
   (lambda (tup)
     (cond ((null? tup) 0)
            (else (+ (car tup) (addtup (cdr tup)))))))
+
+(define x
+  (lambda (m n)
+    (cond ((zero?  n) 0)
+           (else (+ m (x  m (sub1 n)))))))
+
+
+(define tupeq+
+  (lambda (tup1 tup2)
+    (cond ((and (null? tup1) (null? tup2)) '())
+           (else (cons  (+ (car tup1) (car tup2)) (tup+ (cdr tup1) (cdr tup2)))))))
+
+
+(define tup+
+  (lambda (tup1 tup2)
+    (cond ((null? tup1) tup2)
+          ((null? tup2) tup1)
+           (else (cons  (+ (car tup1) (car tup2)) (tup+ (cdr tup1) (cdr tup2)))))))
+
+(define >
+   (lambda (m n)
+   ;   (cond ((and (zero? m) (zero? n)) false)
+     (cond ((zero? m) false)
+     ((zero? n) true)
+     (else (> (sub1 m) (sub1 n))))))
+
+
+(define <
+   (lambda (m n)
+  ;  (cond ((and (zero? m) (zero? n)) false)
+     (cond ((zero? n) false)
+           ((zero? m) true)
+           (else (< (sub1 m) (sub1 n))))))
