@@ -136,3 +136,85 @@
      (cond ((zero? n) false)
            ((zero? m) true)
            (else (< (sub1 m) (sub1 n))))))
+;
+;(define =
+; (lambda (m n)
+;       (cond ((and (zero? m) (zero?  n)) true)
+;             ((or (zero? m) (zero? n)) false)
+;             (else (= (sub1 m) (sub1 n))))))
+; from the book, elegant
+(define =
+  (lambda (m n)
+    (cond ((zero? m) (zero? n))
+          ((zero? n) false)
+          (else (= (sub1 m) (sub1 n))))))
+
+;
+(define ^
+  (lambda (m n)
+    (cond ((zero? n) 1)
+          (else (x m (^ m (sub1 n)))))))
+
+(define ???
+  (lambda (m n)
+    (cond ((< m n) 0)
+          (else (add1 (??? (- m n) n))))))
+
+
+(define division
+  (lambda (m n)
+    (cond ((< m n) 0)
+          (else (add1 (??? (- m n) n))))))
+
+(define length
+    (lambda (lat)
+      (cond ((null? lat) 0)
+            (else (add1 (length (cdr lat)))))))
+
+(define pick
+     (lambda (n lat)
+         (cond 
+               ((null? lat) 'badlist)
+               ((= n 0) 'badn)
+               ((= n 1) (car lat))
+               (else (pick (sub1 n) (cdr lat))))))
+
+(define rempick
+     (lambda (n lat)
+         (cond 
+               ((null? lat) '())
+               ((= n 1)  (cdr lat))
+               (else (cons (car lat) (rempick (sub1 n) (cdr lat)))))))
+
+
+(define nonums
+     (lambda (lat)
+         (cond ((null? lat) '())
+               ((number? (car lat)) (nonums (cdr lat)))
+               (else (cons (car lat) (nonums (cdr lat)))))))
+
+
+(define all-nums
+     (lambda (lat)
+         (cond ((null? lat) '())
+               ((number? (car lat)) (cons (car lat) (all-nums (cdr lat))))
+               (else (all-nums (cdr lat))))))
+
+(define eqan
+     (lambda (a1 a2)
+       (cond ((and (number? a1) (number? a2)) (= a1 a2))
+             ((or (number? a1) (number? a2)) false)
+             (else (eq? a1 a2)))))
+
+(define occur
+   (lambda (a lat)
+      (cond ((null? lat) 0)
+            ((eqan a (car lat)) (+ 1 (occur a (cdr lat))))
+            (else (occur a (cdr lat))))))
+
+
+(define one?
+   (lambda (n)
+     (= 0 (sub1 n))))
+
+; Chapter 5 begins
