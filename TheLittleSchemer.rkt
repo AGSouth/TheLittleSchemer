@@ -226,3 +226,17 @@
                     (cond ((eq? a (car l)) (rember* a (cdr l)))
                           (else (cons (car l) (rember* a (cdr l))))))
           (else (cons (rember* a (car l)) (rember* a (cdr l)))))))
+
+(define lat
+  (lambda (l)
+    (cond ((null? l) true)
+          ((atom? (car l)) (lat (cdr l)))
+          (else false))))
+
+(define insertR*
+  (lambda (new old lat)
+    (cond ((null? lat) '())
+          ((atom? (car lat))
+                 (cond ((eq? old (car lat)) (cons (car lat) (cons new (insertR* new old (cdr lat)))))
+                    (else (cons (car lat) (insertR* new old (cdr lat))))))
+            (else (cons (insertR* new old (car lat)) (insertR* new old (cdr lat)))))))            
