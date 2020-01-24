@@ -1,8 +1,9 @@
 #lang racket
+(require racket/trace)
 (define atom?
   (lambda (x)
     (and (not (pair? x)) (not (null? x)))))
-; 
+
 (define lat?
   (lambda (l)
     (cond ((null? l) #t)
@@ -237,6 +238,35 @@
   (lambda (new old lat)
     (cond ((null? lat) '())
           ((atom? (car lat))
-                 (cond ((eq? old (car lat)) (cons (car lat) (cons new (insertR* new old (cdr lat)))))
+                  (cond ((eq? old (car lat)) (cons (car lat) (cons new (insertR* new old (cdr lat)))))
                     (else (cons (car lat) (insertR* new old (cdr lat))))))
-            (else (cons (insertR* new old (car lat)) (insertR* new old (cdr lat)))))))            
+            (else (cons (insertR* new old (car lat)) (insertR* new old (cdr lat)))))))
+
+(define occur*
+  (lambda (a l)
+    (cond ((null? l) 0)
+          ((atom? (car l))
+             (cond ((eq? a (car l)) (add1 (occur* a (cdr l))))
+                   (else (occur* a (cdr l)))))
+          (else (+ (occur* a (car l)) (occur* a (cdr l)))))))
+
+(define subst*
+  (lambda (new old l)
+    (cond ((null? l) '())
+          ((atom? (car l))
+                 (cond ((eq? old (car l)) (cons new (subst* new old (cdr l))))
+                       (else (cons (car l) (subst* new old (cdr l))))))
+          (else (cons (subst* new old (car l)) (subst* new old (cdr l)))))))
+
+ (define insertL*
+   (lambda (new old l)
+     (cond ((null? l) '())
+            ((atom? (car l))
+                      (cond ((eq? old (car l)) (cons new (cons (car l) (insertL* new old (cdr l)))))
+                            (else (cons (car l) (insertL* new old (cdr l))))))
+            (else (cons (insertL* new old (car l))  (insertL* new old (cdr l)))))))
+(trace insertL*)
+
+(define t1
+   (lambda (l)
+       (atom? (car l))))
