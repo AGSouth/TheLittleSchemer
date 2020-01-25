@@ -267,6 +267,32 @@
             (else (cons (insertL* new old (car l))  (insertL* new old (cdr l)))))))
 (trace insertL*)
 
-(define t1
-   (lambda (l)
-       (atom? (car l))))
+(define member*
+  (lambda (a l)
+   (cond ((null? l) false)
+           ((atom? (car l))
+            (cond ((eq? a (car l)) true)
+                  (else (member* a (cdr l)))))
+          (else (or (member? a (car l)) (member* a (cdr l)))))))
+
+(define leftmost
+  (lambda (l)
+     (cond ((null? l) false)
+           ((cond ((atom? (car l)) (car l))
+            (else (or (leftmost  (car l)) (leftmost (cdr l)))))))))
+
+(trace leftmost)
+
+(define eqlist
+  (lambda (l1 l2)
+    (cond ((and (null? l1) (null? l2)) true)
+          ((or (null? l1) (null? l2)) false)
+          ((and (atom? (car l1)) (atom? (car l2)))
+               (cond ((or (eqan (car l1) (car l2)) (eq? (car l1) (car l2)))
+                        (eqlist (cdr l1) (cdr l2)))
+                      (else false)))
+          ((or (atom? (car l1)) (atom? (car l2)) false))
+          (else (and (eqlist (car l1) (car l2)) (eqlist (cdr l1) (cdr l2)))))))
+          
+                 
+                 
