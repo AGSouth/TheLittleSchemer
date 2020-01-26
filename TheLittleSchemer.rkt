@@ -315,6 +315,14 @@
 
 ;; end of Chapter 5
 
+;; Chapter 6
+;; note: this is wrong since it returns true for (1 1) which i snot a aexp, so ... need to fix...
+(define numbered?
+  (lambda (x)
+      (cond ((null? x) true)
+            ((atom? x) (or (number? x) (eq? x '+) (eq? x 'x) (eq? x '^) (eq? x '/)))
+            (else (and (numbered? (car x)) (numbered? (cdr x)))))))
+
      
           
                  
