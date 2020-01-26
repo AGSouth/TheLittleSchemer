@@ -17,7 +17,7 @@
 
 ; Chapter 3 The Littls Schemer
 
-(define rember
+(define rember2
   (lambda (a lat)
     (cond ((null? lat) (quote ()))
           (else (cond
@@ -293,6 +293,29 @@
                       (else false)))
           ((or (atom? (car l1)) (atom? (car l2)) false))
           (else (and (eqlist (car l1) (car l2)) (eqlist (cdr l1) (cdr l2)))))))
+
+(define equal?
+   (lambda (s1 s2)
+     (cond ((and (null? s1) (null? s2)) true)
+          ((or (null? s1) (null? s2)) false)
+          ((and (atom? s1) (atom? s2))
+             (cond ((eq? s1 s2) true)
+                   (else false)))
+          ((or (atom? s1) (atom? s2)) false)
+             (else (and (equal? (car s1) (car s2)) (equal? (cdr s1) (cdr s2)))))))
+
+
+; final rember from chapter 5
+(define rember
+   (lambda (s l) ; note    any s - expression, not just an atom
+     (cond
+        ((null? l) '())
+        ((equal? (car l) s ) (cdr l))
+        (else (cons (car l) (rember s (cdr l)))))))
+
+;; end of Chapter 5
+
+     
           
                  
                  
