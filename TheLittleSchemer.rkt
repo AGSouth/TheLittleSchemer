@@ -317,13 +317,75 @@
 
 ;; Chapter 6
 ;; note: this is wrong since it returns true for (1 1) which i snot a aexp, so ... need to fix...
-(define numbered?
+(define numberedv1?
   (lambda (x)
       (cond ((null? x) true)
             ((atom? x) (or (number? x) (eq? x '+) (eq? x 'x) (eq? x '^) (eq? x '/)))
             (else (and (numbered? (car x)) (numbered? (cdr x)))))))
 
-     
+(define numberedv2?
+  (lambda (aexp)
+      (cond ((null? aexp) true)
+            ((atom? aexp) (number? aexp))
+            ((and (number? (car aexp)) (or (eq? (car(cdr aexp)) '+) (eq? (car (cdr aexp)) 'x) (eq? (car( cdr aexp))  '^)
+                                           (eq? (car (cdr aexp)) '/))) (numbered? (cdr (cdr aexp))))
+            (else false))))
+
+
+(define numbered-bad? ; page 101 inexplicably bad code in The Little Schemer, endless loop for '(1 + 2) !!
+  (lambda (aexp)
+    (cond ((atom? aexp) (number? aexp))
+          (else
+           (and (numbered? aexp)
+                (numbered?
+                   (car (cdr (cdr aexp)))))))))
+
+(define numbered?  ; bug in this version too, (numbered? '(1 1) returns void instead of false?? fixed by else statement
+   (lambda (aexp)
+     (cond
+         ((atom? aexp) (number? aexp))
+         ((eq? (car (cdr aexp)) (quote +))
+             (and (numbered? (car aexp))
+                  (numbered? (car (cdr (cdr aexp))))))
+         ((eq? (car (cdr aexp)) (quote -))
+             (and (numbered? (car aexp))
+                  (numbered? (car (cdr (cdr aexp))))))
+        ((eq? (car (cdr aexp)) (quote /))
+             (and (numbered? (car aexp))
+                  (numbered? (car (cdr (cdr aexp))))))
+         ((eq? (car (cdr aexp)) (quote x))
+             (and (numbered? (car aexp))
+                  (numbered? (car (cdr (cdr aexp))))))
+         ((eq? (car (cdr aexp)) (quote ^))
+             (and (numbered? (car aexp))
+                  (numbered? (car (cdr (cdr aexp))))))
+         (else false))))
+
+(trace numbered?)
+
+(define value?  ; this is really buggy code (1 + 2 + 3) return 3 ... need to fix at some time
+   (lambda (aexp)
+     (cond
+         ((atom? aexp) aexp)
+          ;(cond ((number? aexp) aexp)
+          ;        (else false)))
+         ((eq? (car (cdr aexp)) (quote +))
+         ;    (cond ((and (value? (car aexp))
+         ;         (value? (car (cdr (cdr aexp))))))
+                   (+ (car aexp) (value? (car (cdr (cdr aexp))))))
+     ;     ((eq? (car (cdr aexp)) (quote -))
+     ;        (and (numbered? (car aexp))
+     ;             (numbered? (car (cdr (cdr aexp))))))
+     ;   ((eq? (car (cdr aexp)) (quote /))
+     ;        (and (numbered? (car aexp))
+     ;             (numbered? (car (cdr (cdr aexp))))))
+     ;    ((eq? (car (cdr aexp)) (quote x))
+     ;        (and (numbered? (car aexp))
+     ;             (numbered? (car (cdr (cdr aexp))))))
+     ;    ((eq? (car (cdr aexp)) (quote ^))
+     ;        (and (numbered? (car aexp))
+     ;             (numbered? (car (cdr (cdr aexp))))))
+         (else false))))  
           
                  
                  
