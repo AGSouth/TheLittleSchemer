@@ -363,16 +363,16 @@
 
 (trace numbered?)
 
-(define value?  ; this is really buggy code (1 + 2 + 3) return 3 ... need to fix at some time
-   (lambda (aexp)
-     (cond
-         ((atom? aexp) aexp)
-          ;(cond ((number? aexp) aexp)
+;(define value=v1?  ; this is really buggy code (1 + 2 + 3) return 3 ... need to fix at some time
+;   (lambda (aexp)
+;     (cond
+;         ((atom? aexp) aexp)
+;          ;(cond ((number? aexp) aexp)
           ;        (else false)))
-         ((eq? (car (cdr aexp)) (quote +))
+;         ((eq? (car (cdr aexp)) (quote +))
          ;    (cond ((and (value? (car aexp))
          ;         (value? (car (cdr (cdr aexp))))))
-                   (+ (car aexp) (value? (car (cdr (cdr aexp))))))
+ ;                  (+ (car aexp) (value-v1? (car (cdr (cdr aexp))))))
      ;     ((eq? (car (cdr aexp)) (quote -))
      ;        (and (numbered? (car aexp))
      ;             (numbered? (car (cdr (cdr aexp))))))
@@ -385,7 +385,30 @@
      ;    ((eq? (car (cdr aexp)) (quote ^))
      ;        (and (numbered? (car aexp))
      ;             (numbered? (car (cdr (cdr aexp))))))
-         (else false))))  
-          
+  ;       (else false))))
+         
+
+(define 1st-sub-exp
+  (lambda (aexp)
+    (car (cdr aexp))))
+
+(define 2nd-sub-exp
+   (lambda (aexp)
+     (car (cdr (cdr aexp)))))
+
+(define operator
+  (lambda (aexp)
+    (car aexp)))
+         
+(define value
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      ((eq? (operator nexp) (quote +))
+       (+ (value (1st-sub-exp nexp))
+          (value (2nd-sub-exp nexp)))))))
+
+
+(trace value)
                  
-                 
+ ; end of Chapter 6              
