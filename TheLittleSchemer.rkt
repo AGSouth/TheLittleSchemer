@@ -432,3 +432,50 @@
  (lambda (lat)
    (cond ((null? lat) '())
          (else (cons (car lat)  (makesetv2 (multirember (car lat) lat)))))))
+
+(define subset?
+  (lambda (s1 s2)
+    (cond ((null? s1) true)
+          ((member? (car s1) s2) (subset? (cdr s1) s2))
+          (else false))))
+
+
+(define subset-v2?
+  (lambda (s1 s2)
+    (cond ((null? s1) true)
+          (else 
+          (and (member? (car s1) s2) (subset-v2? (cdr s1) s2))))))
+
+(define eqset?
+  (lambda (s1 s2)
+    (and (subset? s1 s2) (subset? s2 s1))))
+
+(define intersect?
+   (lambda (s1 s2)
+     (cond ((null? s1) false)
+           (else
+            (or (member? (car s1) s2) (intersect? (cdr s1) s2))))))
+
+(define intersect
+   (lambda (s1 s2)
+     (cond ((null? s1)  '())
+           ((member? (car s1) s2) (cons (car s1) (intersect (cdr s1) s2)))
+           (else (intersect (cdr s1) s2)))))
+
+(define union
+    (lambda (s1 s2)
+      (cond ((null? s1) s2)
+           ((member? (car s1) s2) (union (cdr s1) s2))
+           (else (cons (car s1) (union (cdr s1) s2))))))
+
+(define intersect-all
+   (lambda (l-set)
+     (cond ((null? (cdr l-set)) '())
+           (else (union (intersect (car l-set) (car (cdr l-set))) (intersect-all (cons (car l-set) (cdr (cdr l-set)))))))))
+
+; the book version is much more elegant than my version ... 
+(define intersect-all-book
+    (lambda (l-set)
+      (cond ((null?  (cdr l-set)) (car l-set))
+            (else (intersect (car l-set)
+                      (intersect-all (cdr l-set)))))))
