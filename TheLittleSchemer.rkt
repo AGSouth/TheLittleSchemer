@@ -411,4 +411,24 @@
 
 (trace value)
                  
- ; end of Chapter 6              
+ ; end of Chapter 6
+
+
+ ; start of chapter 7
+(define set?
+   (lambda (l)
+     (cond ((null? l) true)
+           ((member? (car l) (cdr l)) false)
+           (else (set? (cdr l))))))
+
+(define makeset
+ (lambda (lat)
+   (cond ((null? lat) '())
+         ((member? (car lat) (cdr lat)) (makeset (cdr lat)))
+          (else (cons (car lat) (makeset (cdr lat)))))))
+
+
+(define makesetv2
+ (lambda (lat)
+   (cond ((null? lat) '())
+         (else (cons (car lat)  (makesetv2 (multirember (car lat) lat)))))))
