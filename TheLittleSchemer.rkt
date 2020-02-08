@@ -479,3 +479,67 @@
       (cond ((null?  (cdr l-set)) (car l-set))
             (else (intersect (car l-set)
                       (intersect-all (cdr l-set)))))))
+
+(define a-pair?
+  (lambda (x)
+    (cond ((null? x) false)
+          ((atom? x) false)
+          ((null? (cdr x)) false)
+          ((null? (cdr (cdr x))) true)
+          (else false))))
+
+; not sure why authorse used this form
+
+(define first-book
+  (lambda (a)
+         (cond
+           (else (car a)))))
+
+(define first
+  (lambda (p)
+    (car p)))
+
+(define second
+  (lambda (p)
+    (car (cdr p))))
+
+(define third
+  (lambda (p)
+    (cdr (cdr p))))
+
+(define build
+  (lambda (s1 s2)
+    (cons s1 (cons s2 '()))))
+
+(define fun?
+   (lambda (rel)
+     (set? (firsts rel))))
+
+(define revrel-v1
+  (lambda (rel)
+    (cond ((null? rel) '())
+          (else (cons (build (second (car rel)) (first (car rel))) (revrel (cdr rel)))))))
+
+(define revpair
+  (lambda (pair)
+    (build (second pair) (first pair))))
+
+
+(define revrel
+  (lambda (rel)
+    (cond ((null? rel) '())
+          (else (cons (revpair (car rel)) (revrel (cdr rel)))))))
+
+                 
+
+(define seconds
+  (lambda (l)
+  (cond ((null? l) (quote ()))
+        (else
+          (cons (second (car l)) (seconds (cdr l)))))))
+
+(define fullfun?
+   (lambda (fun)
+     (set? (seconds fun))))
+
+; end of chapter 7
