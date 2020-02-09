@@ -543,3 +543,33 @@
      (set? (seconds fun))))
 
 ; end of chapter 7
+
+; start Chapter 8
+
+(define rember-f-v1
+   (lambda (test? s l) ; note    any s - expression, not just an atom
+     (cond
+        ((null? l) '())
+        ((test? (car l) s ) (cdr l))
+        (else (cons (car l) (rember-f test? s (cdr l)))))))
+
+(define eq?-c
+  (lambda (a)
+    (lambda (x)
+      (eq? x a))))
+
+ (define eq?-salad (eq?-c 'salad))
+
+(define rember-f
+   (lambda (test?)
+   (lambda (s l) ; 
+     (cond
+        ((null? l) '())
+        ((test? (car l) s ) (cdr l))
+        (else (cons (car l) (rember-f test? s (cdr l))))))))
+
+(define rember-eq? (rember-f eq?))
+
+
+ 
+
