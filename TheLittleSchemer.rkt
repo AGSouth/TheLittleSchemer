@@ -566,10 +566,57 @@
      (cond
         ((null? l) '())
         ((test? (car l) s ) (cdr l))
-        (else (cons (car l) (rember-f test? s (cdr l))))))))
+        (else (cons (car l) ((rember-f test?) s (cdr l))))))))
 
 (define rember-eq? (rember-f eq?))
 
 
- 
+(define insertL-f
+  (lambda (test?)
+  (lambda (new old l)
+    (cond ((null? l) '())
+          ((test? (car l) old) (cons new l))
+          (else (cons (car l) ((insertL-f  test?) new old (cdr l))))))))
 
+(define insertL-eq (insertL-f eq?))
+
+(define insert-g-JM
+    (lambda (dir?)
+      (lambda (new old l)
+      (cond ((eq? dir? 'R) (insertR new old l))
+            (else (insertL new old l)))))) ; yep Know this is wrong, should test explicitly for L and err ...
+
+(define insert-Right-JM (insert-g-JM 'R))
+
+
+(define insert-Left-JM (insert-g-JM 'L))
+
+ ; ok the above 3 functions handle using existing insertR / insertL books wants us to get
+ ; experience passing in code
+
+(define seqL
+       (lambda (new old l)
+         (cons new (cons old l)))) ; 
+
+(define seqR
+       (lambda (new old l)
+         (cons old  (cons new ))))
+
+(define insert-g
+  (lambda (seq)
+    (lambda (new old l)
+      (cond
+        ((null? l) '())
+        ((eq? old (car l))
+          (seq new old (cdr l)))
+        (else  (cons (car l) ((insert-g seq) new old (cdr l))))))))
+
+(define insertR1 (insert-g seqR))
+
+(define insertL1 (insert-g seqL))
+
+(define seqS
+  (lambda (new old l)
+    (cons new l)))
+
+(define subst1 (insert-g seqS))
