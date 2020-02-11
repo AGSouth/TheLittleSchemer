@@ -400,7 +400,7 @@
   (lambda (aexp)
     (car aexp)))
          
-(define value
+(define value-chapter5
   (lambda (nexp)
     (cond
       ((atom? nexp) nexp)
@@ -409,7 +409,7 @@
           (value (2nd-sub-exp nexp)))))))
 
 
-(trace value)
+
                  
  ; end of Chapter 6
 
@@ -620,3 +620,42 @@
     (cons new l)))
 
 (define subst1 (insert-g seqS))
+
+(define atom-to-function
+  (lambda (y)
+       (cond ((eq? y '+) +)
+             ((eq? y 'x) x) ; when x was the parameter, this did not work! beause x = 'x ... neat bug
+             ((eq? y '^) ^)
+             ((eq? y '^)))))
+
+(define value
+  (lambda (nexp)
+    (cond
+      ((atom? nexp) nexp)
+      (((atom-to-function (operator nexp))
+          (value (1st-sub-exp nexp))
+          (value (2nd-sub-exp nexp)))))))
+
+(define multirember-f
+         (lambda (test?)
+           (lambda (a lat)
+             (cond ((null? lat) '())
+                   ((test? a (car lat))
+                     ((multirember-f test?) a (cdr lat)))
+                   (else
+                     (cons (car lat)  ((multirember-f test?) a (cdr lat))))))))
+
+(define multirember-eq? (multirember-f eq?))
+
+(define eq-tuna?
+  (eq?-c 'tuna))
+
+(define multiremberT
+  (lambda (test? lat)
+     (cond ((null? lat) '())
+           ((test? (car lat))
+                (multiremberT test? (cdr lat)))
+           (else
+               (cons (car lat) (multiremberT test? (cdr lat)))))))
+
+                  

@@ -411,4 +411,212 @@
 
 (trace value)
                  
- ; end of Chapter 6              
+ ; end of Chapter 6
+
+
+ ; start of chapter 7
+(define set?
+   (lambda (l)
+     (cond ((null? l) true)
+           ((member? (car l) (cdr l)) false)
+           (else (set? (cdr l))))))
+
+(define makeset
+ (lambda (lat)
+   (cond ((null? lat) '())
+         ((member? (car lat) (cdr lat)) (makeset (cdr lat)))
+          (else (cons (car lat) (makeset (cdr lat)))))))
+
+
+(define makesetv2
+ (lambda (lat)
+   (cond ((null? lat) '())
+         (else (cons (car lat)  (makesetv2 (multirember (car lat) lat)))))))
+
+(define subset?
+  (lambda (s1 s2)
+    (cond ((null? s1) true)
+          ((member? (car s1) s2) (subset? (cdr s1) s2))
+          (else false))))
+
+
+(define subset-v2?
+  (lambda (s1 s2)
+    (cond ((null? s1) true)
+          (else 
+          (and (member? (car s1) s2) (subset-v2? (cdr s1) s2))))))
+
+(define eqset?
+  (lambda (s1 s2)
+    (and (subset? s1 s2) (subset? s2 s1))))
+
+(define intersect?
+   (lambda (s1 s2)
+     (cond ((null? s1) false)
+           (else
+            (or (member? (car s1) s2) (intersect? (cdr s1) s2))))))
+
+(define intersect
+   (lambda (s1 s2)
+     (cond ((null? s1)  '())
+           ((member? (car s1) s2) (cons (car s1) (intersect (cdr s1) s2)))
+           (else (intersect (cdr s1) s2)))))
+
+(define union
+    (lambda (s1 s2)
+      (cond ((null? s1) s2)
+           ((member? (car s1) s2) (union (cdr s1) s2))
+           (else (cons (car s1) (union (cdr s1) s2))))))
+
+(define intersect-all
+   (lambda (l-set)
+     (cond ((null? (cdr l-set)) '())
+           (else (union (intersect (car l-set) (car (cdr l-set))) (intersect-all (cons (car l-set) (cdr (cdr l-set)))))))))
+
+; the book version is much more elegant than my version ... 
+(define intersect-all-book
+    (lambda (l-set)
+      (cond ((null?  (cdr l-set)) (car l-set))
+            (else (intersect (car l-set)
+                      (intersect-all (cdr l-set)))))))
+
+(define a-pair?
+  (lambda (x)
+    (cond ((null? x) false)
+          ((atom? x) false)
+          ((null? (cdr x)) false)
+          ((null? (cdr (cdr x))) true)
+          (else false))))
+
+; not sure why authorse used this form
+
+(define first-book
+  (lambda (a)
+         (cond
+           (else (car a)))))
+
+(define first
+  (lambda (p)
+    (car p)))
+
+(define second
+  (lambda (p)
+    (car (cdr p))))
+
+(define third
+  (lambda (p)
+    (cdr (cdr p))))
+
+(define build
+  (lambda (s1 s2)
+    (cons s1 (cons s2 '()))))
+
+(define fun?
+   (lambda (rel)
+     (set? (firsts rel))))
+
+(define revrel-v1
+  (lambda (rel)
+    (cond ((null? rel) '())
+          (else (cons (build (second (car rel)) (first (car rel))) (revrel (cdr rel)))))))
+
+(define revpair
+  (lambda (pair)
+    (build (second pair) (first pair))))
+
+
+(define revrel
+  (lambda (rel)
+    (cond ((null? rel) '())
+          (else (cons (revpair (car rel)) (revrel (cdr rel)))))))
+
+                 
+
+(define seconds
+  (lambda (l)
+  (cond ((null? l) (quote ()))
+        (else
+          (cons (second (car l)) (seconds (cdr l)))))))
+
+(define fullfun?
+   (lambda (fun)
+     (set? (seconds fun))))
+
+; end of chapter 7
+
+; start Chapter 8
+
+(define rember-f-v1
+   (lambda (test? s l) ; note    any s - expression, not just an atom
+     (cond
+        ((null? l) '())
+        ((test? (car l) s ) (cdr l))
+        (else (cons (car l) (rember-f test? s (cdr l)))))))
+
+(define eq?-c
+  (lambda (a)
+    (lambda (x)
+      (eq? x a))))
+
+ (define eq?-salad (eq?-c 'salad))
+
+(define rember-f
+   (lambda (test?)
+   (lambda (s l) ; 
+     (cond
+        ((null? l) '())
+        ((test? (car l) s ) (cdr l))
+        (else (cons (car l) ((rember-f test?) s (cdr l))))))))
+
+(define rember-eq? (rember-f eq?))
+
+
+(define insertL-f
+  (lambda (test?)
+  (lambda (new old l)
+    (cond ((null? l) '())
+          ((test? (car l) old) (cons new l))
+          (else (cons (car l) ((insertL-f  test?) new old (cdr l))))))))
+
+(define insertL-eq (insertL-f eq?))
+
+(define insert-g-JM
+    (lambda (dir?)
+      (lambda (new old l)
+      (cond ((eq? dir? 'R) (insertR new old l))
+            (else (insertL new old l)))))) ; yep Know this is wrong, should test explicitly for L and err ...
+
+(define insert-Right-JM (insert-g-JM 'R))
+
+
+(define insert-Left-JM (insert-g-JM 'L))
+
+ ; ok the above 3 functions handle using existing insertR / insertL books wants us to get
+ ; experience passing in code
+
+(define seqL
+       (lambda (new old l)
+         (cons new (cons old l)))) ; 
+
+(define seqR
+       (lambda (new old l)
+         (cons old  (cons new ))))
+
+(define insert-g
+  (lambda (seq)
+    (lambda (new old l)
+      (cond
+        ((null? l) '())
+        ((eq? old (car l))
+          (seq new old (cdr l)))
+        (else  (cons (car l) ((insert-g seq) new old (cdr l))))))))
+
+(define insertR1 (insert-g seqR))
+
+(define insertL1 (insert-g seqL))
+
+(define seqS
+  (lambda (new old l)
+    (cons new l)))
+
+(define subst1 (insert-g seqS))
