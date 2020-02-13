@@ -658,4 +658,34 @@
            (else
                (cons (car lat) (multiremberT test? (cdr lat)))))))
 
-                  
+
+(define multirember&co
+  (lambda (a lat col)
+    (cond ((null? lat)
+             (col '() '()))
+          ((eq? (car lat) a)
+             (multirember&co a (cdr lat)
+                          (lambda (newlat seen)
+                            (col newlat (cons (car lat) seen)))))
+          (else
+             (multirember&co a
+                             (cdr lat)
+                             (lambda (newlat seen)
+                               (col (cons (car lat) newlat) seen)))))))
+                                
+(define a-friend
+  (lambda (x y)
+    (null? y)))
+
+(define new-friend
+  (lambda (newlat seen)
+    (a-friend newlat (cons (car lat) seen))))
+
+ (define latest-friend
+   (lambda (newlat seen)
+     (a-friend (cons 'and newlat) seen)))
+
+ (define last-friend
+   (lambda (x y)
+     (length x)))
+ 
