@@ -703,3 +703,79 @@
                      (multiinsertLR new oldL oldR (cdr lat)))))
        (else (cons (car lat)
                      (multiinsertLR new oldL oldR (cdr lat)))))))
+
+(define multiinsertLR&co
+         (lambda (new oldL oldR lat col)
+           (cond
+             ((null? lat)
+               (col '() 0 0))
+             ((eq? (car lat) oldL)
+              (multiinsertLR&co new oldL oldR (cdr lat)
+                   (lambda (newlat L R)
+                     (col (cons new
+                             (cons oldL newlat))
+                             (add1 L) R))))
+             ((eq? (car lat) oldR)
+              (multiinsertLR&co new oldL oldR (cdr lat)
+                   (lambda (newlat L R)
+                     (col (cons oldR 
+                             (cons new newlat))
+                              L (add1 R)))))
+             (else
+                (multiinsertLR&co new oldL oldR (cdr lat)
+                     (lambda (newlat L R)
+                       (col (cons (car lat) newlat)
+                            L R)))))))
+
+(define mycol-list
+  (lambda (newlist L R)
+     newlist))
+
+(define mycol-counts
+  (lambda (newlist L R)
+     (cons L (cons R '()))))
+
+
+(define myeven? ; note this does not work ... for future functions using libary function even? 
+  (lambda (n)
+    (= (* 2 (/ n 2)) n)))
+
+(define evens-only*
+  (lambda (l)
+    (cond ((null? l) '())
+          ((atom? (car l))
+            (cond 
+             ((even? (car l)) (cons (car l) (evens-only* (cdr l))))
+             (else (evens-only* (cdr l)))))
+          
+          (else
+           (cons (evens-only* (car l)) (evens-only* (cdr l)))))))
+
+; (trace evens-only)
+
+ (define evens-only*&co
+   (lambda (l col)
+     (cond ((null? l) (col '() 1 0))
+           ((atom? (car l))
+              (cond ((even? (car l))
+                      (evens-only*&co (cdr l)
+                       (lambda (newl p s)            
+                          (col (cons (car l) newl) (x (car l) p) s))))
+                    (else (evens-only*&co (cdr l)
+                           (lambda (newl p s)
+                             (col newl p (+ (car l) s)))))))
+           (else
+             (evens-only*&co (car l)
+                               ;    (evens-only*&co (cdr l)
+                                        (lambda (al ap as)
+                                          (evens-only*&co (cdr l)
+                                               (lambda (dl dp ds)
+                                                 (col (cons al dl)
+                                                 (x ap dp)
+                                                 (+ as ds))))))))))
+
+; the above is buggy need to revisit
+
+(define the-last-friend
+  (lambda (newl product sum)
+    (cons sum (cons product newl))))
