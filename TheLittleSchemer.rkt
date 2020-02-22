@@ -774,8 +774,39 @@
                                                  (x ap dp)
                                                  (+ as ds))))))))))
 
-; the above is buggy need to revisit
+; 
 
 (define the-last-friend
   (lambda (newl product sum)
     (cons sum (cons product newl))))
+
+; finished chapter 8 twisted on collectors ...
+
+; CHAPTER 9
+(define eternity
+  (lambda (x)
+    (eternity x)))
+
+(define shift
+  (lambda (pair)
+    (build (first (first pair))
+           (build (second (first pair))
+                  (second pair)))))
+
+(define length*  ; note very specific length function MUST pass in two pairs ..
+  (lambda (pora)
+    (cond
+      ((atom? pora) 1)
+      (else
+        (+ (length* (first pora))
+           (length* (second pora)))))))
+
+
+(define keep-looking
+  (lambda (a sorn lat)
+    (cond ((number? sorn) (keep-looking a (pick sorn lat) lat))
+          (else (eq? a sorn)))))
+
+(define looking
+  (lambda (a lat)
+    (keep-looking a 1 lat)))
