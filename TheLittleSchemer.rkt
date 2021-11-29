@@ -3,7 +3,7 @@
 (define atom?
   (lambda (x)
     (and (not (pair? x)) (not (null? x)))))
-
+;;
 (define lat?
   (lambda (l)
     (cond ((null? l) #t)
@@ -810,3 +810,6 @@
 (define looking
   (lambda (a lat)
     (keep-looking a 1 lat)))
+
+;; let this be used by TheSeasonedSchemer
+(provide (all-defined-out))
